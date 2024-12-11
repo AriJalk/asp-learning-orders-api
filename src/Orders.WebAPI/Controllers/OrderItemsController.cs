@@ -89,7 +89,7 @@ namespace Orders.WebAPI.Controllers
 		[HttpDelete("{itemId}")]
 		public async Task<IActionResult> DeleteOrderItem(Guid orderId, Guid itemId)
 		{
-			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(DeleteOrderItem)}\Deleting Order-Item");
+			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(DeleteOrderItem)}\nDeleting Order-Item");
 			try
 			{
 				OrderItemResponse itemResponse = await _orderItemGetterService.GetOrderItemByOrderItemId(itemId);
@@ -113,7 +113,7 @@ namespace Orders.WebAPI.Controllers
 		[HttpPut("{itemId}")]
 		public async Task<ActionResult<OrderItemResponse>> UpdateOrderItem(Guid orderId, Guid itemId, OrderItemUpdateRequest updateRequest)
 		{
-			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(UpdateOrderItem)}\Updating Order-Item");
+			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(UpdateOrderItem)}\nUpdating Order-Item");
 			if (updateRequest.OrderItemId != itemId)
 			{
 				return BadRequest("Mismatch Item-ID");

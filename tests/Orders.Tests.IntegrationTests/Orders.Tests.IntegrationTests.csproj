@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orders.Infrastructure\Orders.Infrastructure.csproj" />
-    <ProjectReference Include="..\Orders.WebAPI\Orders.WebAPI.csproj" />
+    <ProjectReference Include="..\..\src\Orders.Infrastructure\Orders.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Orders.WebAPI\Orders.WebAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
