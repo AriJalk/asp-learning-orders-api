@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Orders.Core.Domain.Entities;
 using Orders.Core.DTO;
 using Orders.Core.ServiceContracts.Orders;
 using Orders.WebAPI.Controllers;
@@ -131,14 +132,142 @@ namespace Orders.Tests.ControllerTests
 		#endregion
 
 		#region AddOrder
+		[Fact]
+		public async Task AddOrder_AddingFailed_ThrowsException()
+		{
+			//Arrange
+			OrderAddRequest request = _fixture.Create<OrderAddRequest>();
+			_orderAdderServiceMock.Setup(temp => temp.AddOrder(It.IsAny<OrderAddRequest>())).ThrowsAsync(new Exception());
+
+			//Act
+			Func<Task> action = async () =>
+			{
+				await _controller.AddOrder(request);
+			};
+
+			//Assert
+			await action.Should().ThrowAsync<Exception>();
+		}
+
+		[Fact]
+		public async Task AddOrder_AddingSuccessful_ReturnsCreatedAtAction()
+		{
+			//Arrange
+			OrderAddRequest addRequest = _fixture.Create<OrderAddRequest>();
+			Order order = _fixture.Build<Order>()
+				.With(o => o.CustomerName, addRequest.CustomerName)
+				.Create();
+			OrderResponse expectedOrderResponse = order.ToOrderResponse();
+			expectedOrderResponse.OrderItems = addRequest.OrderItems.Select(oi => oi.ToOrderItem().ToResponse()).ToList();
+			_orderAdderServiceMock.Setup(temp => temp.AddOrder(It.Is<OrderAddRequest>(r => r.Equals(addRequest)))).ReturnsAsync(expectedOrderResponse);
+
+			//Act
+			ActionResult<OrderResponse> actionResult = await _controller.AddOrder(addRequest);
+
+			//Assert
+			CreatedAtActionResult createdResult = Assert.IsType<CreatedAtActionResult>(actionResult.Result);
+			OrderResponse actualOrderResponse = Assert.IsAssignableFrom<OrderResponse>(createdResult.Value);
+			actualOrderResponse.Should().BeEquivalentTo(expectedOrderResponse);
+		}
+
 
 		#endregion
 
 		#region UpdateOrder
+		[Fact]
+		public async Task UpdateOrder_MismatchId_ReturnsBadRequest()
+		{
+			//Arrange
+			Guid orderId = Guid.Parse("C85D2C71-CCF4-4C4E-A63F-FFF249E24884");
+			Guid updateOrderId = Guid.Parse("94AA5313-F94F-4887-A8CF-B1C836FFFEBA");
+			OrderUpdateRequest updateRequest = _fixture.Build<OrderUpdateRequest>()
+				.With(r => r.OrderId, updateOrderId)
+				.Create();
+
+			//Act
+			ActionResult<OrderResponse> actionResult = await _controller.UpdateOrder(orderId, updateRequest);
+
+			//Assert
+			BadRequestObjectResult badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
+		}
+
+		[Fact]
+		public async Task UpdateOrder_UpdateFailure_ThrowsException()
+		{
+			//Arrange
+			Guid orderId = Guid.Parse("C85D2C71-CCF4-4C4E-A63F-FFF249E24884");
+			OrderUpdateRequest updateRequest = _fixture.Build<OrderUpdateRequest>()
+				.With(r => r.OrderId, orderId)
+				.Create();
+			_orderUpdaterServiceMock.Setup(temp => temp.UpdateOrder(It.Is<OrderUpdateRequest>(r => r.Equals(updateRequest)))).ThrowsAsync(new Exception());
+
+			//Act
+			Func<Task> action = async () =>
+			{
+				await _controller.UpdateOrder(orderId, updateRequest);
+			};
+
+			//Assert
+			await action.Should().ThrowAsync<Exception>();
+
+		}
+
+		[Fact]
+		public async Task UpdateOrder_UpdateSuccessful_ReturnsOkResultWithOrderResponse()
+		{
+			//Arrange
+			OrderUpdateRequest updateRequest = _fixture.Create<OrderUpdateRequest>();
+			Order order = new Order() 
+			{
+				CustomerName = updateRequest.CustomerName,
+				OrderDate = updateRequest.OrderDate,
+				OrderId = updateRequest.OrderId,
+				OrderNumber = updateRequest.OrderNumber,
+				TotalAmount = updateRequest.TotalAmount,
+			};
+			OrderResponse expectedOrderResponse = order.ToOrderResponse();
+
+			_orderUpdaterServiceMock.Setup(temp => temp.UpdateOrder(It.Is<OrderUpdateRequest>(r => r.Equals(updateRequest)))).ReturnsAsync(expectedOrderResponse);
+
+			//Act
+			ActionResult<OrderResponse> actionResult = await _controller.UpdateOrder(updateRequest.OrderId, updateRequest);
+
+			//Assert
+			OkObjectResult okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+			OrderResponse actualOrderResponse = Assert.IsAssignableFrom<OrderResponse>(okResult.Value);
+		}
 
 		#endregion
 
 		#region DeleteOrder
+
+		[Fact]
+		public async Task DeleteOrder_OrderNotFound_ReturnsNotFoundResult()
+		{
+			//Arrange
+			Guid id = Guid.NewGuid();
+			_orderDeleterServiceMock.Setup(temp => temp.DeleteOrderByOrderId(It.IsAny<Guid>())).ReturnsAsync(false);
+
+			//Act
+			IActionResult actionResult = await _controller.DeleteOrder(id);
+
+			//Assert
+			NotFoundResult notFoundResult = Assert.IsType<NotFoundResult>(actionResult);
+		}
+
+		[Fact]
+		public async Task DeleteOrder_DeleteSuccessful_ReturnsNoContentResult()
+		{
+			//Arrange
+			Guid id = Guid.NewGuid();
+			_orderDeleterServiceMock.Setup(temp => temp.DeleteOrderByOrderId(It.IsAny<Guid>())).ReturnsAsync(true);
+
+			//Act
+			IActionResult actionResult = await _controller.DeleteOrder(id);
+
+			//Assert
+			NoContentResult noContentResult = Assert.IsType<NoContentResult>(actionResult);
+		}
 
 		#endregion
 	}

@@ -68,9 +68,16 @@ namespace Orders.WebAPI.Controllers
 		public async Task<ActionResult<OrderResponse>> AddOrder(OrderAddRequest orderAddRequest)
 		{
 			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(AddOrder)}\nAdding order");
-			OrderResponse response = await _orderAdderService.AddOrder(orderAddRequest);
-			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(AddOrder)}\nAdd successful");
-			return CreatedAtAction(nameof(GetOrderById), new { id = response.OrderId }, response);
+			try
+			{
+				OrderResponse response = await _orderAdderService.AddOrder(orderAddRequest);
+				_logger.LogInformation($"{nameof(OrdersController)}/{nameof(AddOrder)}\nAdd successful");
+				return CreatedAtAction(nameof(GetOrderById), new { id = response.OrderId }, response);
+			}
+			catch
+			{
+				throw;
+			}
 		}
 
 		[HttpPut("{id}")]
@@ -82,9 +89,17 @@ namespace Orders.WebAPI.Controllers
 				_logger.LogInformation($"{nameof(OrdersController)}/{nameof(UpdateOrder)}\nUpdate failure");
 				return BadRequest(new { Message = "Mismatch id" });
 			}
-			OrderResponse orderResponse = await _orderUpdaterService.UpdateOrder(orderUpdateRequest);
-			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(UpdateOrder)}\nUpdate successful");
-			return Ok(orderResponse);
+			try
+			{
+				OrderResponse orderResponse = await _orderUpdaterService.UpdateOrder(orderUpdateRequest);
+				_logger.LogInformation($"{nameof(OrdersController)}/{nameof(UpdateOrder)}\nUpdate successful");
+				return Ok(orderResponse);
+
+			}
+			catch
+			{
+				throw;
+			}
 		}
 
 		[HttpDelete("{id}")]
