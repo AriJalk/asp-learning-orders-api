@@ -25,9 +25,9 @@ namespace Orders.WebAPI.Controllers
 		private readonly IOrderItemUpdaterService _orderItemUpdaterService;
 		private readonly IOrderItemDeleterService _orderItemDeleterService;
 
-		private readonly IOrderGetterService _orderGetterService;
+		//private readonly IOrderGetterService _orderGetterService;
 
-		public OrderItemsController(ILogger<OrderItemsController> logger, IOrderItemAdderService adderService, IOrderItemGetterService getterService, IOrderItemUpdaterService updaterService, IOrderItemDeleterService deleterService, IOrderGetterService orderGetterService)
+		public OrderItemsController(ILogger<OrderItemsController> logger, IOrderItemAdderService adderService, IOrderItemGetterService getterService, IOrderItemUpdaterService updaterService, IOrderItemDeleterService deleterService)
 		{
 			_logger = logger;
 
@@ -35,7 +35,6 @@ namespace Orders.WebAPI.Controllers
 			_orderItemGetterService = getterService;
 			_orderItemUpdaterService = updaterService;
 			_orderItemDeleterService = deleterService;
-			_orderGetterService = orderGetterService;
 		}
 
 		[HttpGet]

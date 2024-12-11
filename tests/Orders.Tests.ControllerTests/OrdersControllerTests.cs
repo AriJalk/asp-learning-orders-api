@@ -20,19 +20,14 @@ namespace Orders.Tests.ControllerTests
 	{
 		private readonly OrdersController _controller;
 
-		private readonly IOrderAdderService _orderAdderService;
 		private readonly Mock<IOrderAdderService> _orderAdderServiceMock;
 
-		private readonly IOrderGetterService _orderGetterService;
 		private readonly Mock<IOrderGetterService> _orderGetterServiceMock;
 
-		private readonly IOrderFilterService _orderFilterService;
 		private readonly Mock<IOrderFilterService> _orderFilterServiceMock;
 
-		private readonly IOrderUpdaterService _orderUpdaterService;
 		private readonly Mock<IOrderUpdaterService> _orderUpdaterServiceMock;
 
-		private readonly IOrderDeleterService _orderDeleterService;
 		private readonly Mock<IOrderDeleterService> _orderDeleterServiceMock;
 
 		private readonly IFixture _fixture;
@@ -40,23 +35,18 @@ namespace Orders.Tests.ControllerTests
 		public OrdersControllerTests()
 		{
 			_orderAdderServiceMock = new Mock<IOrderAdderService>();
-			_orderAdderService = _orderAdderServiceMock.Object;
 
 			_orderGetterServiceMock = new Mock<IOrderGetterService>();
-			_orderGetterService = _orderGetterServiceMock.Object;
 
 			_orderFilterServiceMock = new Mock<IOrderFilterService>();
-			_orderFilterService = _orderFilterServiceMock.Object;
 
 			_orderUpdaterServiceMock = new Mock<IOrderUpdaterService>();
-			_orderUpdaterService = _orderUpdaterServiceMock.Object;
 
 			_orderDeleterServiceMock = new Mock<IOrderDeleterService>();
-			_orderDeleterService = _orderDeleterServiceMock.Object;
 
 			_fixture = new Fixture();
 
-			_controller = new OrdersController(new Mock<ILogger<OrdersController>>().Object, _orderAdderService, _orderGetterService, _orderFilterService, _orderUpdaterService, _orderDeleterService);
+			_controller = new OrdersController(new Mock<ILogger<OrdersController>>().Object, _orderAdderServiceMock.Object, _orderGetterServiceMock.Object, _orderFilterServiceMock.Object, _orderUpdaterServiceMock.Object, _orderDeleterServiceMock.Object);
 		}
 
 		#region GetOrders
