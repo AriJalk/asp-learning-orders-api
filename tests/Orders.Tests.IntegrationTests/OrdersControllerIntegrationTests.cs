@@ -27,7 +27,7 @@ namespace Orders.Tests.IntegrationTests
 		[Fact]
 		public async Task Orders_GetAllOrders_Successful()
 		{
-
+			await _httpClient.PostAsJsonAsync("/api/Orders", _fixture.Create<OrderAddRequest>());
 			HttpResponseMessage result = await _httpClient.GetAsync("/api/Orders");
 
 			string responseContent = await result.Content.ReadAsStringAsync();

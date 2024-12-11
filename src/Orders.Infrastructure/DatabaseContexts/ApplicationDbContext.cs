@@ -25,21 +25,13 @@ namespace Orders.Infrastructure.DatabaseContexts
 		{
 			base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<SequenceNumber>().HasData(new SequenceNumber() {Id = 1});
-			modelBuilder.HasSequence<long>("OrderSequence");
-		}
-
-
-		public async Task<long> sp_GetNextSequenceNumber()
-		{
-			long result = Database.SqlQueryRaw<long>("EXECUTE [dbo].[GetNextSequenceNumber]").AsEnumerable().FirstOrDefault();
-			return result;
+			modelBuilder.Entity<SequenceNumber>().HasData(new SequenceNumber() {Year = DateTime.Today.Year, NextSequenceNumber = 0});
 		}
 	}
 	public class SequenceNumber
 	{
 		[Key]
-		public short Id {  get; set; }
+		public int Year {  get; set; }
 		public long NextSequenceNumber { get; set; }
 	}
 }

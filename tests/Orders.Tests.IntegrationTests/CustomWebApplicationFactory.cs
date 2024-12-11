@@ -17,23 +17,23 @@ namespace Orders.Tests.IntegrationTests
 
 			builder.UseEnvironment("Test");
 
-			/*builder.ConfigureAppConfiguration((context, configBuilder) =>
+			builder.ConfigureAppConfiguration((context, configBuilder) =>
 			{
-				configBuilder.AddUserSecrets<CustomWebApplicationFactory>();
-			});*/
+				//configBuilder.AddUserSecrets<CustomWebApplicationFactory>();
+			});
 
 			builder.ConfigureServices(services =>
 			{
-				//var descriptor = services.SingleOrDefault(temp => temp.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-				//if (descriptor != null)
-				//{
-				//	services.Remove(descriptor);
-				//}
+				var descriptor = services.SingleOrDefault(temp => temp.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+				if (descriptor != null)
+				{
+					services.Remove(descriptor);
+				}
 
-				//services.AddDbContext<ApplicationDbContext>(options =>
-				//{
-				//	//options.UseInMemoryDatabase("TestDatabase");
-				//});
+				services.AddDbContext<ApplicationDbContext>(options =>
+				{
+					//options.UseInMemoryDatabase("TestDatabase");
+				});
 			});
 		}
 

@@ -12,8 +12,8 @@ using Orders.Infrastructure.DatabaseContexts;
 namespace Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241114142343_GetNextSequence_StoredProcedure")]
-    partial class GetNextSequence_StoredProcedure
+    [Migration("20241211162154_YearlyNumberSequenceTable")]
+    partial class YearlyNumberSequenceTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,8 +35,8 @@ namespace Orders.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("OrderDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("OrderNumber")
                         .IsRequired()
@@ -80,23 +80,23 @@ namespace Orders.Infrastructure.Migrations
 
             modelBuilder.Entity("Orders.Infrastructure.DatabaseContexts.SequenceNumber", b =>
                 {
-                    b.Property<short>("Id")
+                    b.Property<int>("Year")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<short>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Year"));
 
                     b.Property<long>("NextSequenceNumber")
                         .HasColumnType("bigint");
 
-                    b.HasKey("Id");
+                    b.HasKey("Year");
 
                     b.ToTable("SequenceNumber");
 
                     b.HasData(
                         new
                         {
-                            Id = (short)1,
+                            Year = 2024,
                             NextSequenceNumber = 0L
                         });
                 });

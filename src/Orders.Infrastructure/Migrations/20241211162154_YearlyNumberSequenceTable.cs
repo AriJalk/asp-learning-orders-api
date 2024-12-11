@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Orders.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSequence : Migration
+    public partial class YearlyNumberSequenceTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,23 +14,31 @@ namespace Orders.Infrastructure.Migrations
             migrationBuilder.DropSequence(
                 name: "OrderNumberSequence");
 
+            migrationBuilder.AlterColumn<DateTime>(
+                name: "OrderDate",
+                table: "Orders",
+                type: "datetime2",
+                nullable: false,
+                oldClrType: typeof(DateOnly),
+                oldType: "date");
+
             migrationBuilder.CreateTable(
                 name: "SequenceNumber",
                 columns: table => new
                 {
-                    Id = table.Column<short>(type: "smallint", nullable: false)
+                    Year = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NextSequenceNumber = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SequenceNumber", x => x.Id);
+                    table.PrimaryKey("PK_SequenceNumber", x => x.Year);
                 });
 
             migrationBuilder.InsertData(
                 table: "SequenceNumber",
-                columns: new[] { "Id", "NextSequenceNumber" },
-                values: new object[] { (short)1, 0L });
+                columns: new[] { "Year", "NextSequenceNumber" },
+                values: new object[] { 2024, 0L });
         }
 
         /// <inheritdoc />
@@ -41,6 +50,14 @@ namespace Orders.Infrastructure.Migrations
             migrationBuilder.CreateSequence(
                 name: "OrderNumberSequence",
                 startValue: 0L);
+
+            migrationBuilder.AlterColumn<DateOnly>(
+                name: "OrderDate",
+                table: "Orders",
+                type: "date",
+                nullable: false,
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
         }
     }
 }

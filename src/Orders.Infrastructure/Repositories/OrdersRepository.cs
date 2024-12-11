@@ -43,7 +43,18 @@ namespace Orders.Infrastructure.Repositories
 
 		public async Task<long> GetNextSequenceNumber()
 		{
-			return await _db.sp_GetNextSequenceNumber();
+			SequenceNumber?  sequenceNumber = await _db.SequenceNumber.FirstOrDefaultAsync(s => s.Year == DateTime.Today.Year);
+			if (sequenceNumber == null)
+			{
+				sequenceNumber = new SequenceNumber()
+				{
+					Year = DateTime.Today.Year,
+					NextSequenceNumber = 0,
+				};
+				//Create current year in table and initialize
+				await _db.SequenceNumber.AddAsync(sequenceNumber);
+			}
+			return ++sequenceNumber.NextSequenceNumber;
 		}
 
 		public async Task<Order?> GetOrderByOrderID(Guid orderId)
