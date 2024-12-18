@@ -10,25 +10,25 @@ namespace Orders.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
-            builder.Services.AddControllers();
             builder.Services.ConfigureServices(builder.Configuration);
 
             var app = builder.Build();
 
-
-            app.UseExceptionHandler("/error");
-            app.UseExceptionHandlingMiddleware();
-
+            if (!builder.Environment.IsDevelopment())
+            {
+				app.UseExceptionHandler("/error");
+				app.UseExceptionHandlingMiddleware();
+			}
+            
             // Configure the HTTP request pipeline.
 
-            app.UseHsts();
+            
+			app.UseHsts();
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
 
 
-            app.MapControllers();
+			app.MapControllers();
 
             app.Run();
 

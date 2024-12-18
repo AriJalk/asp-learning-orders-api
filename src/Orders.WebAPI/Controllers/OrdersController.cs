@@ -38,6 +38,7 @@ namespace Orders.WebAPI.Controllers
 
 		// GET: api/Orders
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<IEnumerable<OrderResponse>>> GetOrders()
 		{
 			IEnumerable<OrderResponse> responses = await _orderGetterService.GetAllOrders();
@@ -47,6 +48,8 @@ namespace Orders.WebAPI.Controllers
 
 		// GET: api/Orders/5
 		[HttpGet("{id}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<OrderResponse>> GetOrderById(Guid id)
 		{
 			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(GetOrderById)}\nGetting order {id}");
@@ -61,7 +64,7 @@ namespace Orders.WebAPI.Controllers
 			}
 		}
 
-
+		[ProducesResponseType(StatusCodes.Status201Created)]
 		// POST: api/Orders
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
@@ -81,6 +84,8 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<OrderResponse>> UpdateOrder(Guid id, OrderUpdateRequest orderUpdateRequest)
 		{
 			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(UpdateOrder)}\nUpdating order {id}");
@@ -103,6 +108,8 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> DeleteOrder(Guid id)
 		{
 			_logger.LogInformation($"{nameof(OrdersController)}/{nameof(DeleteOrder)}\nDeleting order {id}");

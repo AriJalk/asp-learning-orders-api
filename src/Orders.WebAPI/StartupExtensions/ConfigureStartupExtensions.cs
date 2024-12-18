@@ -13,6 +13,10 @@ namespace Orders.WebAPI.StartupExtensions
 	{
 		public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
 		{
+
+			services.AddControllers();
+
+
 			services.AddScoped<IOrderGetterService, OrderGetterService>();
 			services.AddScoped<IOrderAdderService, OrderAdderService>();
 			services.AddScoped<IOrderFilterService, OrderFilterService>();
@@ -29,15 +33,12 @@ namespace Orders.WebAPI.StartupExtensions
 			//services.AddScoped<IOrderItemsRepository, OrderItemsRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-
 			services.AddDbContext<ApplicationDbContext>(options =>
 			{
 				if (configuration.GetConnectionString("DefaultConnection") is string connection)
 					options.UseSqlServer(connection);
 
 			});
-
-			
 
 			return services;
 		}

@@ -38,6 +38,7 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpGet]
+		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<OrderItemResponse>>> GetOrderItemsByOrderId(Guid orderId)
 		{
 			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(GetOrderItemsByOrderId)}\nGetting order items by order: {orderId}");
@@ -47,6 +48,8 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpGet("{itemId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<OrderItemResponse>> GetOrderItemByOrderItemId(Guid orderId, Guid itemId)
 		{
 			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(GetOrderItemByOrderItemId)}\nGetting order-item by id: {itemId}, order: {orderId}");
@@ -67,6 +70,9 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpPost]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<OrderItemResponse>> AddOrderItem(Guid orderId, OrderItemAddRequest orderItemAddRequest)
 		{
 			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(AddOrderItem)}\nAdding Order-Item");
@@ -86,6 +92,9 @@ namespace Orders.WebAPI.Controllers
 		}
 
 		[HttpDelete("{itemId}")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status204NoContent)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> DeleteOrderItem(Guid orderId, Guid itemId)
 		{
 			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(DeleteOrderItem)}\nDeleting Order-Item");
@@ -110,6 +119,9 @@ namespace Orders.WebAPI.Controllers
 		}
 			
 		[HttpPut("{itemId}")]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<OrderItemResponse>> UpdateOrderItem(Guid orderId, Guid itemId, OrderItemUpdateRequest updateRequest)
 		{
 			_logger.LogInformation($"{nameof(OrderItemsController)}/{nameof(UpdateOrderItem)}\nUpdating Order-Item");
