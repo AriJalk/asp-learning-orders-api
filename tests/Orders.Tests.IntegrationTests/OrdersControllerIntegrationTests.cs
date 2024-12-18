@@ -1,30 +1,36 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Orders.Core.DTO;
-using Orders.Infrastructure.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Orders.Tests.IntegrationTests
 {
-	public class OrdersControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory>
+	public class OrdersControllerIntegrationTests : IClassFixture<CustomWebApplicationFactory>, IAsyncLifetime
 	{
+		private readonly CustomWebApplicationFactory _factory;
 		private readonly HttpClient _httpClient;
 		private readonly IFixture _fixture;
+		private readonly JsonSerializerOptions _jsonSerializerOptions;
 
 		public OrdersControllerIntegrationTests(CustomWebApplicationFactory factory)
 		{
-			_httpClient = factory.CreateClient();
+			_factory = factory;
+			_httpClient = _factory.CreateClient();
 			//_httpClient.BaseAddress = new Uri("https://localhost:7273");
 			_fixture = new Fixture();
-			factory.ResetDb();
+			_jsonSerializerOptions = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+		}
+
+		public async Task InitializeAsync()
+		{
+			await _factory.OpenConnection();
+		}
+
+		public async Task DisposeAsync()
+		{
+			await _factory.CloseConnection();
 		}
 
 		[Fact]
@@ -42,9 +48,7 @@ namespace Orders.Tests.IntegrationTests
 
 			// Deserialize the JSON response to List<OrderResponse>
 			List<OrderResponse> orders = JsonSerializer.Deserialize<List<OrderResponse>>(
-				responseContent,
-				new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-			);
+				responseContent, _jsonSerializerOptions);
 
 			orders.Should().NotBeEmpty();
 		}
@@ -58,11 +62,10 @@ namespace Orders.Tests.IntegrationTests
 
 			// Deserialize the JSON response to List<OrderResponse>
 			List<OrderResponse> orders = JsonSerializer.Deserialize<List<OrderResponse>>(
-				responseContent,
-				new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-			);
+				responseContent, _jsonSerializerOptions);
 
 			orders.Should().BeEmpty();
 		}
+
 	}
 }
